@@ -15,6 +15,9 @@ pre-commit = "^2.19.0"
 pytest = "^7.1.2"
 wemake-python-styleguide = "^0.16.1"
 pyproject-flake8 = "^0.0.1-alpha.4"
+httpx = "^0.23.0"
+pytest-asyncio = "^0.18.3"
+pytest-cov = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -31,6 +34,12 @@ known_first_party = ["frost_shard"]
 
 [tool.flake8]
 exclude = ".git,__pycache__,*/static/*,*/migrations/*,*/test_*/"
-ignore = "D100,DAR101,D104,DAR201,WPS115"
+ignore = "D100,DAR101,D104,DAR201,DAR301,WPS115"
 max-line-length = 80
 inline-quotes = '"'
+
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+asyncio_mode = "strict"
+addopts = "--strict-markers -vv --cache-clear --maxfail=1 --cov=frost_shard --cov-report=term --cov-report=html --cov-branch --cov-fail-under=100 --no-cov-on-fail"
