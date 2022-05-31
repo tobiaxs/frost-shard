@@ -1,2 +1,3 @@
-# frost-shard
-Fully anonymous and dettached file storage
+# Frost Shard
+
+Fully anonymous and detached file storage
