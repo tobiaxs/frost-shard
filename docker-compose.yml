@@ -1,0 +1,21 @@
+version: "3.8"
+
+x-default-app:
+  &default-app
+  build:
+    context: .
+    dockerfile: ./docker/Dockerfile
+    target: dev
+  env_file:
+    - ./docker/local.env
+  volumes:
+    - .:/app
+  stdin_open: true
+  tty: true
+
+services:
+  fastapi:
+    <<: *default-app
+    container_name: frost-shard-api
+    ports:
+      - 8000:8000
