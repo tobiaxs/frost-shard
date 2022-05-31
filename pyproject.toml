@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "frost-shard"
+version = "0.1.0"
+description = ""
+authors = ["tobiaxs <piotr.tobiasz.dev@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.78.0"
+
+[tool.poetry.dev-dependencies]
+pre-commit = "^2.19.0"
+pytest = "^7.1.2"
+wemake-python-styleguide = "^0.16.1"
+pyproject-flake8 = "^0.0.1-alpha.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+line_length = 80
+profile = "black"
+default_section = "THIRDPARTY"
+known_first_party = ["frost_shard"]
+
+[tool.flake8]
+exclude = ".git,__pycache__,*/static/*,*/migrations/*,*/test_*/"
+max-line-length = 80
+inline-quotes = '"'
