@@ -45,3 +45,6 @@ jobs:
 
       - name: Run pre-commit hooks
         run: poetry run pre-commit run --all-files
+
+      - name: Run tests with pytest
+        run: poetry run pytest

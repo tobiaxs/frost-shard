@@ -17,7 +17,7 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Install necessary soft
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y netcat curl git make gcc python3-dev libpq-dev \
+    && apt-get install --no-install-recommends -y netcat curl git make gcc postgresql python3-dev libpq-dev \
     && apt-get clean
 
 # Install poetry
