@@ -38,11 +38,17 @@ known_first_party = ["frost_shard"]
 
 [tool.flake8]
 exclude = ".git,__pycache__,*/static/*,*/migrations/*,*/test_*/"
-ignore = "B008,D100,D104,D107,DAR101,DAR201,DAR301,WPS110,WPS115,WPS404,WPS428"
+ignore = "B008,D100,D104,D107,DAR101,DAR201,DAR301,WPS110,WPS115,WPS404,WPS428,WPS430"
 max-line-length = 80
 inline-quotes = '"'
+per-file-ignores = """
+    */conftest.py:WPS442
+"""
 
 [tool.pytest.ini_options]
 testpaths = "tests"
 asyncio_mode = "strict"
-addopts = "--strict-markers -vv --cache-clear --maxfail=1 --cov=frost_shard --cov-report=term --cov-report=html --cov-branch --cov-fail-under=0 --no-cov-on-fail"
+addopts = "--strict-markers -vv --cache-clear --maxfail=1 --cov=frost_shard --cov-report=term --cov-report=html --cov-branch --cov-fail-under=1 --no-cov-on-fail"
+
+[tool.coverage.report]
+exclude_lines = ["# pragma: no cover", "Protocol", "if TYPE_CHECKING:"]

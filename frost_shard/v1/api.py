@@ -5,7 +5,7 @@ from frost_shard.domain.models import FileCreateModel
 from frost_shard.domain.services import FileService
 from frost_shard.v1.dependencies import get_file_service
 
-router = APIRouter(tags=["v1"], prefix="/v1")
+router = APIRouter(tags=["v1"], prefix="/api/v1")
 
 
 @router.post(

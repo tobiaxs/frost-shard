@@ -1,4 +1,4 @@
-from typing import AsyncGenerator, Callable
+from typing import AsyncGenerator, Callable, TypeAlias
 
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -6,8 +6,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from frost_shard.settings import settings
 
+SessionGenerator: TypeAlias = AsyncGenerator[AsyncSession, None]
 
-def get_session_factory(database_url: str) -> Callable[[], AsyncSession]:
+
+def get_session_factory(database_url: str) -> Callable[..., AsyncSession]:
     """Return a session factory for the given database URL."""
     return sessionmaker(
         bind=create_async_engine(database_url),
@@ -21,7 +23,7 @@ session_factory = get_session_factory(
 )
 
 
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session() -> SessionGenerator:  # pragma: no cover
     """Return an async database session."""
     async with session_factory() as session:
         yield session
