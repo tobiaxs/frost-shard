@@ -13,5 +13,9 @@ class Settings(BaseSettings):
     # API
     CORS_ALLOW_ORIGINS: list[str] = []
 
+    # Database
+    DATABASE_URL: str = ""
+    DATABASE_NAME: str = ""
+
 
 settings = Settings()

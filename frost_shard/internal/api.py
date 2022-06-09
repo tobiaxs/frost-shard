@@ -1,6 +1,16 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, responses, status
 
 router = APIRouter(tags=["internal"], include_in_schema=False)
+
+
+@router.get("/")
+async def redirect_to_docs() -> responses.RedirectResponse:
+    """Redirect root requests to the docs.
+
+    Returns:
+        RedirectResponse: Redirect to the docs page.
+    """
+    return responses.RedirectResponse("/api/docs")
 
 
 @router.get(
