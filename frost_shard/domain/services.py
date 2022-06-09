@@ -16,11 +16,12 @@ class FileService(Generic[ReadModel]):
 
     def __init__(
         self,
+        *,
         repository: Repository[ReadModel, FileCreateModel],
     ) -> None:
         self.repository = repository
 
-    def create(self, data: FileCreateModel) -> ReadModel:
+    async def create(self, data: FileCreateModel) -> ReadModel:
         """Create a new file.
 
         Args:
@@ -30,14 +31,14 @@ class FileService(Generic[ReadModel]):
             ReadModel: Created file.
         """
         logger.info("Creating a new file", data=data)
-        file = self.repository.create(data)
+        file = await self.repository.create(data)
         logger.info("A new file created", file=file)
         return file
 
-    def collect(self) -> list[ReadModel]:
+    async def collect(self) -> list[ReadModel]:
         """Collect all files.
 
         Returns:
             list[ReadModel]: List of all files.
         """
-        return self.repository.collect()
+        return await self.repository.collect()

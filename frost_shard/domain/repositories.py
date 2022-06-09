@@ -12,7 +12,7 @@ class Repository(Protocol, Generic[ReadModel, CreateModel]):
     Interface class for all the concrete repository implementations.
     """
 
-    def create(self, data: CreateModel) -> ReadModel:
+    async def create(self, data: CreateModel) -> ReadModel:
         """Create a new object.
 
         Args:
@@ -20,6 +20,6 @@ class Repository(Protocol, Generic[ReadModel, CreateModel]):
         """
         ...
 
-    def collect(self) -> list[ReadModel]:
+    async def collect(self) -> list[ReadModel]:
         """Collect all objects."""
         ...

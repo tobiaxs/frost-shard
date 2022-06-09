@@ -16,12 +16,10 @@ x-default-app:
 services:
   fastapi:
     <<: *default-app
-    container_name: frost-shard-api
     ports:
       - 8000:8000
 
   postgres:
-    container_name: frost-shard-db
     image: postgres:14
     volumes:
       - postgres_data:/var/lib/postgresql/data

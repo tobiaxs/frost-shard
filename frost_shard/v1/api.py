@@ -13,12 +13,19 @@ router = APIRouter(tags=["v1"], prefix="/v1")
     status_code=status.HTTP_201_CREATED,
     response_model=FileSQLModel,
 )
-def create_file(
+async def create_file(
     body: FileCreateModel,
     service: FileService[FileSQLModel] = Depends(get_file_service),
 ) -> FileSQLModel:
-    """Create a new file."""
-    return service.create(body)
+    """Create a new file.
+
+    Args:
+        body (FileCreateModel): Data for the new file.
+
+    Returns:
+        FileSQLModel: Created file.
+    """
+    return await service.create(body)
 
 
 @router.get(
@@ -26,8 +33,12 @@ def create_file(
     status_code=status.HTTP_200_OK,
     response_model=list[FileSQLModel],
 )
-def get_files(
+async def get_files(
     service: FileService[FileSQLModel] = Depends(get_file_service),
 ) -> list[FileSQLModel]:
-    """Fetch all files."""
-    return service.collect()
+    """Fetch all files.
+
+    Returns:
+        list[FileSQLModel]: List of all files.
+    """
+    return await service.collect()

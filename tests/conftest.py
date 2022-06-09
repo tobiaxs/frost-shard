@@ -1,5 +1,3 @@
-"""Tests fixtures."""
-
 from typing import AsyncGenerator
 
 import pytest_asyncio
