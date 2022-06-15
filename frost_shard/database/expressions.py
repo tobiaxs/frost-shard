@@ -13,7 +13,7 @@ def get_expression(
 
     Args:
         model (type[SQLModel]): Model to create the expression for.
-        field (str): Field to create the expression for.
+        field (str): Field name.
         value (Any): Field value.
 
     Raises:
