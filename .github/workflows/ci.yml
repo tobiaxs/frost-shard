@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/frost-shard
+      SECRET_KEY: rWauxkPZYKIB4-FKr8JjqTzmTLiWqs4hYuFZvUjdEBU=
     services:
       postgres:
         image: postgres
