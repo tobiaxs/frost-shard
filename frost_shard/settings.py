@@ -17,5 +17,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = ""
     DATABASE_NAME: str = ""
 
+    # Cryptography
+    SECRET_KEY: str = ""
+
 
 settings = Settings()
