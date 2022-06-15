@@ -10,7 +10,7 @@ done
 
 echo "Postgres started"
 
-poetry run alembic upgrade head
+make migrate
 
 if [[ -z ${DEVELOPMENT} ]]; then
 

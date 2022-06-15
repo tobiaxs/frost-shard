@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, status
 
 from frost_shard.database.models import FileSQLModel
+from frost_shard.domain.file_service import FileService
 from frost_shard.domain.models import FileCreateModel
-from frost_shard.domain.services import FileService
 from frost_shard.v1.dependencies import get_file_service
+from frost_shard.v1.filters import FileFilters, PaginationParams
 
 router = APIRouter(tags=["v1"], prefix="/api/v1")
 
@@ -35,10 +36,17 @@ async def create_file(
 )
 async def get_files(
     service: FileService[FileSQLModel] = Depends(get_file_service),
+    file_filters: FileFilters = Depends(),
+    pagination: PaginationParams = Depends(),
 ) -> list[FileSQLModel]:
-    """Fetch all files.
+    """Get all files based on provided filters.
+
+    Args:
+        service (FileService): File service.
+        file_filters (FileFilters): File filters.
+        pagination (PaginationParams): Pagination parameters.
 
     Returns:
-        list[FileSQLModel]: List of all files.
+        list[FileSQLModel]: List of files.
     """
-    return await service.collect()
+    return await service.collect(file_filters, pagination)
