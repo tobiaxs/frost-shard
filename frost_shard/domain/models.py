@@ -19,9 +19,15 @@ class FileCreateModel(BaseModel):
     email: EmailStr
     date: datetime.date | None = None
 
+    class Config:
+        frozen = True
+
 
 class FileEncryptedModel(BaseModel):
     """Data model for the file creation."""
 
     email: bytes
     date: datetime.date | None = None
+
+    class Config:
+        frozen = True

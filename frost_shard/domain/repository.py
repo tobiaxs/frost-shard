@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 ReadModel = TypeVar("ReadModel")
 CreateModel = TypeVar("CreateModel", bound=BaseModel, contravariant=True)
-
 PaginationEntry = TypeVar("PaginationEntry")
 
 

@@ -11,7 +11,9 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # API
+    DOMAIN: str = "127.0.0.1"
     CORS_ALLOW_ORIGINS: list[str] = []
+    # TODO: Add API prefix
 
     # Database
     DATABASE_URL: str = ""
@@ -19,6 +21,15 @@ class Settings(BaseSettings):
 
     # Cryptography
     SECRET_KEY: str = ""
+
+    # Auth0
+    AUTH0_DOMAIN: str = ""
+    AUDIENCE: str = ""
+    ISSUER: str = ""
+    ALGORITHMS: list[str] = []
+    CLIENT_ID: str = ""
+    CLIENT_SECRET: str = ""
+    TOKEN_FIELD_NAME: str = "access_token"
 
 
 settings = Settings()
