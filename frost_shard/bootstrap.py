@@ -20,3 +20,4 @@ def add_cors(app: FastAPI) -> None:
 def bootstrap(app: FastAPI) -> None:
     """Initialize all the additional components of the application."""
     add_cors(app)
+    # TODO: Add missing dependencies.

@@ -1,22 +1,21 @@
 from dataclasses import asdict
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeAlias, TypeVar
 
-from cryptography.fernet import Fernet
 from structlog import get_logger
 
+from frost_shard.domain.crypto_service import CryptoService
 from frost_shard.domain.models import (
     FileCreateModel,
     FileEncryptedModel,
     FileReadModel,
 )
 from frost_shard.domain.repository import Repository, paginate
-from frost_shard.settings import settings
 from frost_shard.v1.filters import FileFilters, PaginationParams
 
 logger = get_logger(__name__)
 
 FileReadModelT = TypeVar("FileReadModelT", bound=FileReadModel)
-DictItems = list[tuple[str, Any]]
+DictItems: TypeAlias = list[tuple[str, Any]]
 
 
 def non_empty_dict_factory(items: DictItems) -> dict:
@@ -31,21 +30,6 @@ def non_empty_dict_factory(items: DictItems) -> dict:
     return {key: value for key, value in items if value}
 
 
-class CryptoAdapter:
-    """Simple adapter to encrypt and decrypt messages using 'cryptography'."""
-
-    def __init__(self):
-        self.fernet = Fernet(settings.SECRET_KEY)
-
-    def encrypt(self, msg: bytes) -> bytes:
-        """Encrypt the message using the secret key."""
-        return self.fernet.encrypt(msg)
-
-    def decrypt(self, msg: bytes) -> bytes:
-        """Decrypt the message using the secret key."""
-        return self.fernet.decrypt(msg)
-
-
 class FileService(Generic[FileReadModelT]):
     """Orchestrator for the files domain.
 
@@ -56,9 +40,10 @@ class FileService(Generic[FileReadModelT]):
         self,
         *,
         repository: Repository[FileReadModelT, FileEncryptedModel],
+        crypto_service: CryptoService,
     ) -> None:
         self.repository = repository
-        self.crypto = CryptoAdapter()
+        self.crypto = crypto_service
 
     async def create(self, data: FileCreateModel) -> FileReadModelT:
         """Create a new file."""
@@ -91,6 +76,7 @@ class FileService(Generic[FileReadModelT]):
             if self.crypto.decrypt(file.email).decode() == filters.email
         )
 
+        # TODO: Move the pagination out of here or try to do it with redis
         # Paginate filtered files
         paginated_files = paginate(
             files_per_email,

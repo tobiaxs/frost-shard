@@ -16,17 +16,18 @@ router = APIRouter(tags=["v1"], prefix="/api/v1")
 )
 async def create_file(
     body: FileCreateModel,
-    service: FileService[FileSQLModel] = Depends(get_file_service),
+    file_service: FileService[FileSQLModel] = Depends(get_file_service),
 ) -> FileSQLModel:
     """Create a new file.
 
     Args:
         body (FileCreateModel): Data for the new file.
+        file_service (FileService): File service.
 
     Returns:
         FileSQLModel: Created file.
     """
-    return await service.create(body)
+    return await file_service.create(body)
 
 
 @router.get(
@@ -35,18 +36,18 @@ async def create_file(
     response_model=list[FileSQLModel],
 )
 async def get_files(
-    service: FileService[FileSQLModel] = Depends(get_file_service),
+    file_service: FileService[FileSQLModel] = Depends(get_file_service),
     file_filters: FileFilters = Depends(),
     pagination: PaginationParams = Depends(),
 ) -> list[FileSQLModel]:
     """Get all files based on provided filters.
 
     Args:
-        service (FileService): File service.
+        file_service (FileService): File service.
         file_filters (FileFilters): File filters.
         pagination (PaginationParams): Pagination parameters.
 
     Returns:
         list[FileSQLModel]: List of files.
     """
-    return await service.collect(file_filters, pagination)
+    return await file_service.collect(file_filters, pagination)
