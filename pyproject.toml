@@ -16,6 +16,9 @@ alembic = "^1.8.0"
 cryptography = "^37.0.2"
 PyJWT = "^2.4.0"
 backoff = "^2.1.2"
+asgi-ratelimit = "^0.9.0"
+sentry-sdk = "^1.6.0"
+starlette-exporter = "^0.13.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.19.0"
@@ -41,7 +44,7 @@ known_first_party = ["frost_shard"]
 
 [tool.flake8]
 exclude = ".git,__pycache__,*/static/*,*/migrations/*,*/test_*/"
-ignore = "B008,D100,D104,D106,D107,DAR101,DAR201,DAR301,WPS110,WPS115,WPS116,WPS305,WPS306,WPS404,WPS428,WPS430,WPS431,WPS432"
+ignore = "B008,D100,D104,D106,D107,DAR101,DAR201,DAR301,WPS110,WPS115,WPS116,WPS305,WPS306,WPS404,WPS428,WPS430,WPS431,WPS432,WPS433"
 max-line-length = 80
 inline-quotes = '"'
 per-file-ignores = """
