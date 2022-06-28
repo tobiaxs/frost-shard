@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from frost_shard.auth.models import AuthConfig
 from frost_shard.auth.services import (
-    Auth0Service,
+    AuthRoutingService,
     AuthService,
     HttpService,
     TokenService,
@@ -10,10 +10,13 @@ from frost_shard.auth.services import (
 
 
 @lru_cache(maxsize=1)
-def get_auth0_service() -> Auth0Service:
-    """Prepare the Auth0 service with it's dependencies."""
+def get_auth_service() -> AuthService:
+    """Prepare the authentication service with it's dependencies."""
     config = AuthConfig()
-    auth_service = AuthService(config)
-    http_service = HttpService(config.base_auth0_url)
+    routing_service = AuthRoutingService(config)
+    http_service = HttpService(config.base_auth_url)
     token_service = TokenService(config, http_service)
-    return Auth0Service(auth_service=auth_service, token_service=token_service)
+    return AuthService(
+        routing_service=routing_service,
+        token_service=token_service,
+    )
