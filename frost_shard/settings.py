@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     # Cryptography
     SECRET_KEY: str = ""
 
-    # Auth0
-    AUTH0_DOMAIN: str = ""
+    # Auth
+    AUTH_DOMAIN: str = ""
     AUDIENCE: str = ""
     ISSUER: str = ""
     ALGORITHMS: list[str] = []

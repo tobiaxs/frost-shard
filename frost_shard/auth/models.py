@@ -21,7 +21,7 @@ class AuthConfig(BaseModel):
     """Authentication configuration."""
 
     app_domain: str = settings.DOMAIN
-    auth0_domain: str = settings.AUTH0_DOMAIN
+    auth_domain: str = settings.AUTH_DOMAIN
     client_id: str = settings.CLIENT_ID
     client_secret: str = settings.CLIENT_SECRET
     audience: str = settings.AUDIENCE
@@ -29,13 +29,13 @@ class AuthConfig(BaseModel):
     token_field_name: str = settings.TOKEN_FIELD_NAME
 
     @property
-    def base_auth0_url(self) -> HttpUrl:
-        """Get the base URL for the Auth0 API.
+    def base_auth_url(self) -> HttpUrl:
+        """Get the base URL for the auth API.
 
         Returns:
-            HttpUrl: Base URL for the Auth0 API.
+            HttpUrl: Base URL for the auth API.
         """
-        return HttpUrl(f"https://{self.auth0_domain}/", scheme="https")
+        return HttpUrl(f"https://{self.auth_domain}/", scheme="https")
 
     @property
     def base_app_url(self) -> HttpUrl:

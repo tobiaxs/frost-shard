@@ -45,13 +45,13 @@ class TokenService:
         return jwt.decode(
             token,
             public_key,  # type: ignore
-            issuer=self.config.base_auth0_url,
+            issuer=self.config.base_auth_url,
             audience=self.config.audience,
             algorithms=self.config.algorithms,
         )
 
     async def get_jwt_token(self, code: str) -> str:
-        """Get a JWT token from the Auth0 API.
+        """Get a JWT token from the auth API.
 
         Args:
             code (str): Authorization code.
@@ -75,7 +75,7 @@ class TokenService:
         return response.json()["access_token"]
 
     async def _fetch_jwks(self) -> None:
-        """Fetch the JWKs from the Auth0 API.
+        """Fetch the JWKs from the auth API.
 
         To save some time, the keys are fetched once per 'JWK_REFRESH_RATE'.
         """
@@ -104,14 +104,14 @@ class TokenService:
         )
 
 
-class AuthService:
-    """Service class for handling authentication processes."""
+class AuthRoutingService:
+    """Service class for preparing urls during auth process."""
 
     def __init__(self, config: AuthConfig) -> None:
         self.config = config
 
     def get_authorize_url(self) -> HttpUrl:
-        """Get the URL for the Auth0 authorization flow.
+        """Get the URL for the authorization flow.
 
         Returns:
             HttpUrl: Authorize URL.
@@ -125,14 +125,14 @@ class AuthService:
                 "audience": self.config.audience,
             },
         )
-        auth0_authorize_url = urljoin(
-            self.config.base_auth0_url,
+        auth_authorize_url = urljoin(
+            self.config.base_auth_url,
             f"/authorize?{params}",
         )
-        return HttpUrl(auth0_authorize_url, scheme="https")
+        return HttpUrl(auth_authorize_url, scheme="https")
 
     def get_logout_url(self) -> HttpUrl:
-        """Get the URL for the Auth0 logout flow.
+        """Get the URL for the logout flow.
 
         Returns:
             HttpUrl: Logout URL.
@@ -143,35 +143,35 @@ class AuthService:
                 "client_id": self.config.client_id,
             },
         )
-        auth0_logout_url = urljoin(
-            self.config.base_auth0_url,
+        auth_logout_url = urljoin(
+            self.config.base_auth_url,
             f"/logout?{params}",
         )
-        return HttpUrl(auth0_logout_url, scheme="https")
+        return HttpUrl(auth_logout_url, scheme="https")
 
 
-class Auth0Service:
-    """Orchestrator for all the authentication operations using Auth0."""
+class AuthService:
+    """Orchestrator for all the auth operations."""
 
     def __init__(
         self,
         *,
-        auth_service: AuthService,
+        routing_service: AuthRoutingService,
         token_service: TokenService,
     ) -> None:
-        self.auth_service = auth_service
+        self.routing_service = routing_service
         self.token_service = token_service
 
     def login(self) -> responses.RedirectResponse:
-        """Prepare the redirect to the Auth0 login page."""
-        authorize_url = self.auth_service.get_authorize_url()
+        """Prepare the redirect to the login page."""
+        authorize_url = self.routing_service.get_authorize_url()
         return responses.RedirectResponse(
             authorize_url,
             status_code=status.HTTP_302_FOUND,
         )
 
     async def callback(self, code: str) -> responses.RedirectResponse:
-        """Handle the callback from the Auth0 login page and set the cookie."""
+        """Handle the callback from the login page and set the cookie."""
         token = await self.token_service.get_jwt_token(code)
         response = responses.RedirectResponse(
             "/",
@@ -182,13 +182,13 @@ class Auth0Service:
         return response
 
     def logout(self) -> responses.RedirectResponse:
-        """Prepare redirect to the Auth0 logout page and clear the cookie."""
-        logout_url = self.auth_service.get_logout_url()
+        """Prepare redirect to the logout page and clear the cookie."""
+        logout_url = self.routing_service.get_logout_url()
         response = responses.RedirectResponse(
             logout_url,
             status_code=status.HTTP_302_FOUND,
         )
-        response.delete_cookie(self.auth_service.config.token_field_name)
+        response.delete_cookie(self.routing_service.config.token_field_name)
         return response
 
     async def decode_token(self, token: str) -> dict:
