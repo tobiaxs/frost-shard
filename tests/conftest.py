@@ -44,5 +44,8 @@ def test_app(database_session: AsyncSession) -> FastAPI:
 @pytest_asyncio.fixture()
 async def http_client(test_app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     """Create an instance of the HTTP client."""
-    async with AsyncClient(app=test_app, base_url="http://test") as client:
+    async with AsyncClient(
+        app=test_app,
+        base_url=f"http://test{settings.API_PREFIX}",
+    ) as client:
         yield client

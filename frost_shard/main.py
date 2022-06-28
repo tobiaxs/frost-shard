@@ -17,7 +17,7 @@ def create_application() -> FastAPI:
         title=settings.TITLE,
         version=settings.VERSION,
         description=settings.DESCRIPTION,
-        docs_url="/api/docs",
+        docs_url=f"{settings.API_PREFIX}/api/docs",
     )
 
 
@@ -25,6 +25,6 @@ app = create_application()
 
 bootstrap(app)
 
-app.include_router(internal_router)
-app.include_router(auth_router)
-app.include_router(v1_router)
+app.include_router(internal_router, prefix=settings.API_PREFIX)
+app.include_router(auth_router, prefix=settings.API_PREFIX)
+app.include_router(v1_router, prefix=settings.API_PREFIX)
