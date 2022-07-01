@@ -116,9 +116,8 @@ class AuthRoutingService:
         Returns:
             HttpUrl: Authorize URL.
         """
-        redirect_url = urljoin(
-            self.config.base_app_url,
-            "/fs/api/auth/callback",
+        redirect_url = (
+            f"{self.config.base_app_url}/api/auth/callback"  # noqa: WPS237
         )
         params = urlencode(
             {

@@ -43,7 +43,7 @@ default_section = "THIRDPARTY"
 known_first_party = ["frost_shard"]
 
 [tool.flake8]
-exclude = ".git,__pycache__,*/static/*,*/migrations/*,*/test_*/"
+exclude = ".git,__pycache__,*/static/*,*/migrations/*,*/test_*/,*/versions/*"
 ignore = "B008,D100,D104,D106,D107,DAR101,DAR201,DAR301,DAR401,WPS110,WPS115,WPS116,WPS305,WPS306,WPS332,WPS404,WPS428,WPS430,WPS431,WPS432,WPS433,WPS600"
 max-line-length = 80
 inline-quotes = '"'

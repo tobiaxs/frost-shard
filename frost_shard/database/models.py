@@ -8,7 +8,7 @@ from sqlmodel import Field, SQLModel
 class BaseSQLModel(SQLModel):
     """Base class for all SQL models."""
 
-    id: uuid.UUID | None = Field(  # TODO: Try to have it without '|'
+    id: uuid.UUID = Field(
         default_factory=uuid.uuid4,
         primary_key=True,
     )

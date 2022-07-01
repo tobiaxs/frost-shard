@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class FileReadModel(Protocol):
     """Structural model for the file response."""
 
-    id: uuid.UUID | None
+    id: uuid.UUID
     email: bytes
     date: datetime.date | None
 

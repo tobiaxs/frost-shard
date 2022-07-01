@@ -59,9 +59,10 @@ async def get_request_user(
         decoded_token = await auth_service.decode_token(token.credentials)
     except jwt.exceptions.PyJWTError:
         raise exceptions.AuthenticationError("Invalid token (failed to decode)")
-    # TODO: Move those under just custom claim
-    email = decoded_token.get(f"{settings.CUSTOM_CLAIM}/email")
-    roles = decoded_token.get(f"{settings.CUSTOM_CLAIM}/roles")
+
+    custom_claims = decoded_token[settings.CUSTOM_CLAIM]
+    email = custom_claims.get("email")
+    roles = custom_claims.get("roles")
 
     if not email or not roles:
         logger.error(
