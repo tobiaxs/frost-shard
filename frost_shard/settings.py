@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     CLIENT_ID: str = ""
     CLIENT_SECRET: str = ""
     TOKEN_FIELD_NAME: str = "access_token"
+    CUSTOM_CLAIM: str = ""
 
     # Integrations
     SENTRY_DSN: str = ""

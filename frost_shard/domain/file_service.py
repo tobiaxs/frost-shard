@@ -3,18 +3,16 @@ from typing import Any, Generic, TypeAlias, TypeVar
 
 from structlog import get_logger
 
+from frost_shard.auth import exceptions
+from frost_shard.auth import models as auth_models
+from frost_shard.domain import models
 from frost_shard.domain.crypto_service import CryptoService
-from frost_shard.domain.models import (
-    FileCreateModel,
-    FileEncryptedModel,
-    FileReadModel,
-)
 from frost_shard.domain.repository import Repository, paginate
 from frost_shard.v1.filters import FileFilters, PaginationParams
 
 logger = get_logger(__name__)
 
-FileReadModelT = TypeVar("FileReadModelT", bound=FileReadModel)
+FileReadModelT = TypeVar("FileReadModelT", bound=models.FileReadModel)
 DictItems: TypeAlias = list[tuple[str, Any]]
 
 
@@ -39,18 +37,22 @@ class FileService(Generic[FileReadModelT]):
     def __init__(
         self,
         *,
-        repository: Repository[FileReadModelT, FileEncryptedModel],
+        repository: Repository[FileReadModelT, models.FileEncryptedModel],
         crypto_service: CryptoService,
     ) -> None:
         self.repository = repository
         self.crypto = crypto_service
 
-    async def create(self, data: FileCreateModel) -> FileReadModelT:
+    async def create(
+        self,
+        user: auth_models.RequestUserModel,
+        data: models.FileCreateModel,
+    ) -> FileReadModelT:
         """Create a new file."""
-        logger.info("Creating a new file", data=data)
+        logger.info("Creating a new file", user=user, data=data)
 
-        encrypted_email = self.crypto.encrypt(data.email.encode())
-        encrypted_data = FileEncryptedModel(
+        encrypted_email = self.crypto.encrypt(user.email.encode())
+        encrypted_data = models.FileEncryptedModel(
             email=encrypted_email,
             date=data.date,
         )
@@ -58,22 +60,37 @@ class FileService(Generic[FileReadModelT]):
 
     async def collect(
         self,
+        user: auth_models.RequestUserModel,
         filters: FileFilters,
         pagination: PaginationParams,
     ) -> list[FileReadModelT]:
         """Collect, filter and paginate all the files for given parameters."""
-        logger.info("Fetching files", filters=filters, pagination=pagination)
+        logger.info(
+            "Fetching files",
+            user=user,
+            filters=filters,
+            pagination=pagination,
+        )
 
         # Prepare filters
         filters_dict = asdict(filters, dict_factory=non_empty_dict_factory)
-        filters_dict.pop("email")
+        # Remove email from the filters and default it to the user's email
+        email = filters_dict.pop("email", user.email)
+
+        # Prevent non-admin users from filtering all the files
+        if email != user.email and auth_models.UserRole.ADMIN not in user.roles:
+            logger.error(
+                "Non-admin user trying to filter not his files",
+                user=user,
+            )
+            raise exceptions.PermissionsError
 
         # Fetch filtered files and prepare email filter generator
         files = await self.repository.collect(**filters_dict)
         files_per_email = (
             file
             for file in files
-            if self.crypto.decrypt(file.email).decode() == filters.email
+            if self.crypto.decrypt(file.email).decode() == email
         )
 
         # TODO: Move the pagination out of here or try to do it with redis

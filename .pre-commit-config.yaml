@@ -17,8 +17,6 @@ repos:
         name: Detect Private Key
       - id: mixed-line-ending
         name: Mixed Line Ending
-      - id: detect-private-key
-        name: Detect Private Keys
 
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1

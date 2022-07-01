@@ -3,7 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from ratelimit import RateLimitMiddleware, Rule, types
 from ratelimit.backends.simple import MemoryBackend
 
+from frost_shard.handlers import EXCEPTION_HANDLERS
 from frost_shard.settings import settings
+
+
+def add_exception_handlers(app: FastAPI) -> None:
+    """Add exception handlers to the app."""
+    for exc, handler in dict(EXCEPTION_HANDLERS).items():
+        app.add_exception_handler(exc, handler)
 
 
 def add_cors(app: FastAPI) -> None:
@@ -71,6 +78,7 @@ def init_prometheus_metrics(app: FastAPI) -> None:  # pragma: no cover
 
 def bootstrap(app: FastAPI) -> None:
     """Initialize all the additional components of the application."""
+    add_exception_handlers(app)
     add_cors(app)
     add_rate_limiter(app)
 
