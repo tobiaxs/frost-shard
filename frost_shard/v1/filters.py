@@ -17,8 +17,7 @@ class PaginationParams:
 class FileFilters:
     """File API filters."""
 
-    # TODO: Make it optional
-    email: EmailStr = Query(example="user@email.com")
+    email: EmailStr | None = Query(None)
     date__gt: datetime.date | None = Query(
         None,
         description="Date greater than",

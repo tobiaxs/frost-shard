@@ -2,6 +2,8 @@ import pytest
 from fastapi import status
 from httpx import AsyncClient
 
+from frost_shard.settings import settings
+
 pytestmark = [pytest.mark.asyncio]
 
 
@@ -11,7 +13,10 @@ async def test_root_endpoint(http_client: AsyncClient) -> None:
 
     assert response.status_code == status.HTTP_307_TEMPORARY_REDIRECT
     assert response.next_request is not None
-    assert response.next_request.url == "http://test/api/docs"
+    assert (
+        response.next_request.url
+        == f"http://test{settings.API_PREFIX}/api/docs"
+    )
 
 
 async def test_healthcheck_endpoint(http_client: AsyncClient) -> None:

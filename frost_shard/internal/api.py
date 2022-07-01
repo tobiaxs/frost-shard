@@ -1,5 +1,7 @@
 from fastapi import APIRouter, responses, status
 
+from frost_shard.settings import settings
+
 router = APIRouter(tags=["internal"], include_in_schema=False)
 
 
@@ -10,7 +12,7 @@ async def redirect_to_docs() -> responses.RedirectResponse:
     Returns:
         RedirectResponse: Redirect to the docs page.
     """
-    return responses.RedirectResponse("/api/docs")
+    return responses.RedirectResponse(f"{settings.API_PREFIX}/api/docs")
 
 
 @router.get(

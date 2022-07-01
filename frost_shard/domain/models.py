@@ -2,7 +2,7 @@ import datetime
 import uuid
 from typing import Protocol
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 
 class FileReadModel(Protocol):
@@ -16,7 +16,6 @@ class FileReadModel(Protocol):
 class FileCreateModel(BaseModel):
     """Data model for the incoming file payload."""
 
-    email: EmailStr
     date: datetime.date | None = None
 
     class Config:

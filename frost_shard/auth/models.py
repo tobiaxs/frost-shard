@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field, HttpUrl
+import enum
+
+from pydantic import BaseModel, EmailStr, Field, HttpUrl
 
 from frost_shard.settings import settings
 
@@ -42,14 +44,28 @@ class AuthConfig(BaseModel):
         """Get the base URL for the app.
 
         Returns:
-            HttpUrl: Base URL.
+            HttpUrl: Base app URL.
         """
         return HttpUrl(
-            f"https://{self.app_domain}:8000"
+            f"http://{self.app_domain}:8000{settings.API_PREFIX}"
             if settings.DEBUG
-            else f"http://{self.app_domain}",
+            else f"https://{self.app_domain}{settings.API_PREFIX}",
             scheme="https",
         )
 
     class Config:
         frozen = True
+
+
+class UserRole(str, enum.Enum):
+    """Role of the user."""
+
+    REGULAR = "regular"
+    ADMIN = "admin"
+
+
+class RequestUserModel(BaseModel):
+    """User from request model."""
+
+    email: EmailStr
+    roles: list[UserRole]

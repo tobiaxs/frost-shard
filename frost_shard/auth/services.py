@@ -116,7 +116,10 @@ class AuthRoutingService:
         Returns:
             HttpUrl: Authorize URL.
         """
-        redirect_url = urljoin(self.config.base_app_url, "/api/auth/callback")
+        redirect_url = urljoin(
+            self.config.base_app_url,
+            "/fs/api/auth/callback",
+        )
         params = urlencode(
             {
                 "client_id": self.config.client_id,
@@ -174,7 +177,7 @@ class AuthService:
         """Handle the callback from the login page and set the cookie."""
         token = await self.token_service.get_jwt_token(code)
         response = responses.RedirectResponse(
-            "/",
+            self.routing_service.config.base_app_url,
             status_code=status.HTTP_302_FOUND,
         )
         token_cookie = AccessTokenCookie(value=token)
