@@ -3,12 +3,11 @@ from typing import Any, Generic, TypeAlias, TypeVar
 
 from structlog import get_logger
 
-from frost_shard.auth import exceptions
 from frost_shard.auth import models as auth_models
 from frost_shard.domain import models
 from frost_shard.domain.crypto_service import CryptoService
+from frost_shard.domain.filters import FileFilters, PaginationParams
 from frost_shard.domain.repository import Repository, paginate
-from frost_shard.v1.filters import FileFilters, PaginationParams
 
 logger = get_logger(__name__)
 
@@ -76,14 +75,6 @@ class FileService(Generic[FileReadModelT]):
         filters_dict = asdict(filters, dict_factory=non_empty_dict_factory)
         # Remove email from the filters and default it to the user's email
         email = filters_dict.pop("email", user.email)
-
-        # Prevent non-admin users from filtering all the files
-        if email != user.email and auth_models.UserRole.ADMIN not in user.roles:
-            logger.error(
-                "Non-admin user trying to filter not his files",
-                user=user,
-            )
-            raise exceptions.PermissionsError
 
         # Fetch filtered files and prepare email filter generator
         files = await self.repository.collect(**filters_dict)

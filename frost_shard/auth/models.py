@@ -1,7 +1,6 @@
-import enum
-
 from pydantic import BaseModel, EmailStr, Field, HttpUrl
 
+from frost_shard.auth import enums
 from frost_shard.settings import settings
 
 
@@ -57,15 +56,9 @@ class AuthConfig(BaseModel):
         frozen = True
 
 
-class UserRole(str, enum.Enum):
-    """Role of the user."""
-
-    REGULAR = "regular"
-    ADMIN = "admin"
-
-
 class RequestUserModel(BaseModel):
     """User from request model."""
 
     email: EmailStr
-    roles: list[UserRole]
+    permissions: set[enums.UserPermission]
+    roles: set[enums.UserRole]

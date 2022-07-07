@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, status
 
-from frost_shard.auth.dependencies import get_request_user
+from frost_shard.auth.dependencies import get_request_user, has_permissions
+from frost_shard.auth.enums import UserPermission
 from frost_shard.auth.models import RequestUserModel
 from frost_shard.database.models import FileSQLModel
 from frost_shard.domain.file_service import FileService
+from frost_shard.domain.filters import FileFilters, PaginationParams
 from frost_shard.domain.models import FileCreateModel
+from frost_shard.domain.permissions import validate_filters
 from frost_shard.v1.dependencies import get_file_service
-from frost_shard.v1.filters import FileFilters, PaginationParams
 
 router = APIRouter(tags=["v1"], prefix="/api/v1")
 
@@ -15,6 +17,7 @@ router = APIRouter(tags=["v1"], prefix="/api/v1")
     "/files",
     status_code=status.HTTP_201_CREATED,
     response_model=FileSQLModel,
+    dependencies=(Depends(has_permissions((UserPermission.CREATE_FILES,))),),
 )
 async def create_file(
     body: FileCreateModel,
@@ -37,6 +40,10 @@ async def create_file(
     "/files",
     status_code=status.HTTP_200_OK,
     response_model=list[FileSQLModel],
+    dependencies=(
+        Depends(has_permissions((UserPermission.READ_FILES,))),
+        Depends(validate_filters),
+    ),
 )
 async def get_files(
     user: RequestUserModel = Depends(get_request_user),

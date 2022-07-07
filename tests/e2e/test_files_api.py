@@ -6,7 +6,8 @@ from fastapi import status
 from httpx import AsyncClient
 from pydantic import EmailStr
 
-from frost_shard.auth.models import RequestUserModel, UserRole
+from frost_shard.auth.enums import UserPermission, UserRole
+from frost_shard.auth.models import RequestUserModel
 from frost_shard.domain.crypto_service import CryptoService
 from frost_shard.settings import settings
 from tests.conftest import TEST_USER_EMAIL
@@ -54,7 +55,6 @@ async def test_files_list_api(http_client: AsyncClient) -> None:
 
 
 async def test_files_list_api_with_email_filter(
-    http_client: AsyncClient,
     get_http_client: Callable[..., AsyncClient],
 ) -> None:
     """Check that list endpoint is responding with list of files filtered by email."""
@@ -63,12 +63,23 @@ async def test_files_list_api_with_email_filter(
         client = get_http_client(
             user=RequestUserModel(
                 email=EmailStr(f"test{number}@email.com"),
-                roles=[UserRole.ADMIN],
+                roles={UserRole.ADMIN},
+                permissions={UserPermission.CREATE_FILES},
             )
         )
         await client.post(FILES_ROUTE, json={})
 
-    response = await http_client.get(f"{FILES_ROUTE}?email=test1@email.com")
+    client = get_http_client(
+        user=RequestUserModel(
+            email=EmailStr(TEST_USER_EMAIL),
+            roles={UserRole.ADMIN},
+            permissions={
+                UserPermission.READ_FILES,
+                UserPermission.READ_GLOBAL_FILES,
+            },
+        )
+    )
+    response = await client.get(f"{FILES_ROUTE}?email=test1@email.com")
     data = response.json()
 
     assert response.status_code == status.HTTP_200_OK
@@ -102,7 +113,8 @@ async def test_files_list_api_with_non_admin_filter(
     regular_client = get_http_client(
         user=RequestUserModel(
             email=EmailStr(f"test-regular@email.com"),
-            roles=[UserRole.REGULAR],
+            roles={UserRole.REGULAR},
+            permissions={UserPermission.READ_FILES},
         )
     )
     response = await regular_client.get(
