@@ -11,7 +11,8 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from frost_shard.auth import dependencies as auth_dependencies
-from frost_shard.auth.models import RequestUserModel, UserRole
+from frost_shard.auth.enums import UserPermission, UserRole
+from frost_shard.auth.models import RequestUserModel
 from frost_shard.database import connection
 from frost_shard.main import app as base_app
 from frost_shard.settings import settings
@@ -61,7 +62,8 @@ async def http_client(test_app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
             auth_dependencies.get_request_user
         ] = lambda: RequestUserModel(
             email=EmailStr(TEST_USER_EMAIL),
-            roles=[UserRole.ADMIN],
+            roles={UserRole.ADMIN},
+            permissions={permission.value for permission in UserPermission},
         )
         yield client
 
