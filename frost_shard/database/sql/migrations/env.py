@@ -5,7 +5,7 @@ from alembic import context
 from sqlmodel import SQLModel, create_engine
 from sqlmodel.ext.asyncio.session import AsyncEngine  # type: ignore
 
-from frost_shard.database.models import *
+from frost_shard.database.sql.models import *
 from frost_shard.settings import settings
 
 config = context.config

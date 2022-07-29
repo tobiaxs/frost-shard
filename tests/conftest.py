@@ -13,7 +13,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from frost_shard.auth import dependencies as auth_dependencies
 from frost_shard.auth.enums import UserPermission, UserRole
 from frost_shard.auth.models import RequestUserModel
-from frost_shard.database import connection
+from frost_shard.database.sql import connection
 from frost_shard.main import app as base_app
 from frost_shard.settings import settings
 
@@ -21,7 +21,7 @@ TEST_USER_EMAIL = "test@user.com"
 
 
 @pytest_asyncio.fixture()
-async def database_session() -> connection.SessionGenerator:
+async def database_session() -> AsyncGenerator[AsyncSession, None]:
     """Prepare a test database session."""
     engine_factory = create_async_engine(settings.DATABASE_URL)
     session_factory = connection.get_session_factory(settings.DATABASE_URL)

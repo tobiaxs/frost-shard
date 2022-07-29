@@ -1,4 +1,4 @@
-from typing import Generator, Generic, Iterable, Protocol, TypeVar
+from typing import Generic, Iterable, Iterator, Protocol, TypeVar
 
 from pydantic import BaseModel
 
@@ -11,7 +11,7 @@ def paginate(
     entries: Iterable[PaginationEntry],
     page: int,
     limit: int,
-) -> Generator[PaginationEntry, None, None]:
+) -> Iterator[PaginationEntry]:
     """Paginate a list of entries.
 
     Args:
@@ -20,7 +20,7 @@ def paginate(
         limit (int): Number of entries per page.
 
     Yields:
-        Generator[PaginationEntry, None, None]: Paginated entries.
+        Iterator[PaginationEntry]: Paginated entries.
     """
     offset = page * limit
     end = offset + limit - 1
@@ -28,7 +28,7 @@ def paginate(
         if index >= offset:
             yield entry
         if index == end:
-            return
+            break
 
 
 class Repository(Protocol, Generic[ReadModel, CreateModel]):

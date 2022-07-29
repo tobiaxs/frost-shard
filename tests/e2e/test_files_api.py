@@ -8,7 +8,7 @@ from pydantic import EmailStr
 
 from frost_shard.auth.enums import UserPermission, UserRole
 from frost_shard.auth.models import RequestUserModel
-from frost_shard.domain.crypto_service import CryptoService
+from frost_shard.domain.services import CryptoService
 from frost_shard.settings import settings
 from tests.conftest import TEST_USER_EMAIL
 

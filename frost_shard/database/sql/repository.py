@@ -5,7 +5,7 @@ from sqlmodel import SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel.sql.expression import Select, SelectOfScalar
 
-from frost_shard.database.expressions import create_expressions
+from frost_shard.database.sql.expressions import create_expressions
 
 # TODO: Temporary workaround for SQLModel caching problems
 SelectOfScalar.inherit_cache = True  # type: ignore
@@ -24,11 +24,13 @@ class SQLRepository(Generic[ReadModel, CreateModel]):
         self.table = table
 
     async def create(self, data: CreateModel) -> ReadModel:
-        """Create a new entry of the 'table' type."""
+        """Create a new entry of the 'table' type.
+
+        Object will not be committed to the database
+        until the session is closed.
+        """
         entry = self.table.from_orm(data)
         self.session.add(entry)
-        await self.session.commit()
-        await self.session.refresh(entry)
         return entry
 
     async def collect(self, **filters: dict[str, Any]) -> list[ReadModel]:
@@ -38,5 +40,5 @@ class SQLRepository(Generic[ReadModel, CreateModel]):
             expressions = create_expressions(self.table, filters)
             query = select(self.table).where(*expressions)
         result = await self.session.execute(query)
-        # TODO: For some reason every entry is a one element tuple
+        # For some reason every entry is a one element tuple
         return [entry[0] for entry in result.all()]

@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, responses
 from structlog import get_logger
 
 from frost_shard.auth.api import router as auth_router
@@ -21,9 +21,16 @@ def create_application() -> FastAPI:
     )
 
 
+async def redirect_to_docs():
+    """Redirect root requests to the docs."""
+    return responses.RedirectResponse(f"{settings.API_PREFIX}/api/docs")
+
+
 app = create_application()
 
 bootstrap(app)
+
+app.add_api_route("/", redirect_to_docs, include_in_schema=False)
 
 app.include_router(internal_router, prefix=settings.API_PREFIX)
 app.include_router(auth_router, prefix=settings.API_PREFIX)

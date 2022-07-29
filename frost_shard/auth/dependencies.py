@@ -38,7 +38,6 @@ def get_auth_service() -> services.AuthService:
     routing_service = services.AuthRoutingService(config)
     http_service = HttpService(config.base_auth_url)
     token_service = services.TokenService(config, http_service)
-    # TODO: Maybe split it to 2 separate dependencies
     return services.AuthService(
         routing_service=routing_service,
         token_service=token_service,

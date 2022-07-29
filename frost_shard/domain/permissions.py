@@ -12,13 +12,14 @@ def validate_filters(
     file_filters: FileFilters = Depends(),
 ) -> None:
     """Prevent not permitted users from filtering all the files."""
-    if file_filters.email == user.email:
+    if file_filters.email is None or file_filters.email == user.email:
         return
     if enums.UserPermission.READ_GLOBAL_FILES in user.permissions:
         return
 
     logger.error(
         "User trying to filter not his files",
+        email=file_filters.email,
         user=user,
     )
     raise exceptions.PermissionsError()
